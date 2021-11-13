@@ -6,6 +6,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 import cairo
+from UI.Toolbar import Toolbar
 
 class MyWindow(Gtk.Window):
     def __init__(self):
@@ -18,21 +19,24 @@ class MyWindow(Gtk.Window):
 
         self.fixed = Gtk.Fixed()
         self.add(self.fixed)
+        self.toolbar = Toolbar()
+        self.toolbar.resize_to_fit_width(window_size[0])
+        self.fixed.add(self.toolbar)
+        self.toolbar.move(0, 0)
+        #self.button1 = MyButton()
+        #self.button1.set_size_request(130, 29)
+        #self.button1.connect("motion-notify-event", self.on_button1_move)
+        #self.button1.connect("button-press-event", self.on_button1_press)
+        #self.button1.connect("button-release-event", self.on_button1_release)
 
-        self.button1 = MyButton()
-        self.button1.set_size_request(130, 29)
-        self.button1.connect("motion-notify-event", self.on_button1_move)
-        self.button1.connect("button-press-event", self.on_button1_press)
-        self.button1.connect("button-release-event", self.on_button1_release)
+        ##self.fixed.add(self.button1)
 
-        self.fixed.add(self.button1)
-
-        # Move button1
-        w = self.button1.width;
-        h = self.button1.height;
-        self.button1.move(mid_x - (w / 2.0), mid_y - (h / 2.0))
-        rect = self.button1.frame()
-        print(rect.x, rect.y, rect.width, rect.height)
+        ### Move button1
+        #w = self.button1.width;
+        #h = self.button1.height;
+        #self.button1.move(mid_x - (w / 2.0), mid_y - (h / 2.0))
+        #rect = self.button1.frame()
+        #print(rect.x, rect.y, rect.width, rect.height)
 
     def on_button1_press(self, widget, event):
         #print("Hello, with event: ", dir(event))
