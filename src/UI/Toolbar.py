@@ -6,21 +6,14 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 
+import sys
+import os
+# Make utils available to import from parent directory
+sys.path.append(os.path.abspath('..'))
+from utils import roundrect
+
 # 31 = 30 + 1 pixels, 1 pixel for bottom border
 TOOLBAR_HEIGHT = 31
-
-# Creating function for make roundrect shape
-def roundrect(context, x, y, width, height, radius):
-    context.arc(x + radius, y + radius, radius,
-                math.pi, 3 * math.pi / 2)
-    context.arc(x + width - radius, y + radius, radius,
-                3 * math.pi / 2, 0)
-    context.arc(x + width - radius, y + height - radius,
-                radius, 0, math.pi / 2)
-    context.arc(x + radius, y + height - radius, radius,
-                math.pi / 2, math.pi)
-    context.close_path()
-
 
 class Toolbar(Gtk.DrawingArea):
     def __init__(self):
