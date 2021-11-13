@@ -11,18 +11,18 @@ from UI.Toolbar import Toolbar
 class MyWindow(Gtk.Window):
     def __init__(self):
         super().__init__(title="xFont")
-        self.set_default_size(1024, 650)
+        self.resize(1024, 650)
+        self.set_resizable(True)
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         self.connect("configure-event", self.resized)
         window_size = self.get_size()
         mid_x = window_size[0] / 2.0;
         mid_y = window_size[1]/ 2.0;
-
-        self.fixed = Gtk.Fixed()
-        self.add(self.fixed)
+        self.layout = Gtk.Layout()
+        self.add(self.layout)
         self.toolbar = Toolbar()
         self.toolbar.resize_to_fit_width(window_size[0])
-        self.fixed.add(self.toolbar)
+        self.layout.add(self.toolbar)
         self.toolbar.move(0, 0)
         #self.button1 = MyButton()
         #self.button1.set_size_request(130, 29)
@@ -45,6 +45,7 @@ class MyWindow(Gtk.Window):
 
     def resized(self, widget, event):
         self.layout_views()
+        return False
 
     def on_button1_press(self, widget, event):
         #print("Hello, with event: ", dir(event))
