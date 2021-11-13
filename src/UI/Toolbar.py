@@ -56,8 +56,10 @@ class Toolbar(Gtk.DrawingArea):
         context.set_source_rgb(0.16, 0.17, 0.20)
         roundrect(context, 0, 0, self.width, self.height, 0)
         context.fill()
-        #context.move_to(30, 20)
-        #context.set_source_rgb(0.0, 0.0, 0.0)
+        context.move_to(0, TOOLBAR_HEIGHT)
+        context.set_source_rgb(0.7, 0.7, 0.7)
+        context.line_to(self.width, TOOLBAR_HEIGHT)
+        context.stroke()
         #context.set_font_size(14)
         #context.show_text("Get Glyphs")
         # Scale from 50x50 to 25x25, this works both for regular display
