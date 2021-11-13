@@ -10,9 +10,8 @@ import cairo
 class MyWindow(Gtk.Window):
     def __init__(self):
         super().__init__(title="Hello World")
-        self.set_default_size(800, 600)
-        self.move(640, 100)
-
+        self.set_default_size(1024, 650)
+        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         window_size = self.get_size()
         mid_x = window_size[0] / 2.0;
         mid_y = window_size[1]/ 2.0;
