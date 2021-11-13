@@ -60,7 +60,7 @@ class Toolbar(Gtk.DrawingArea):
         self.height = height
 
     def do_drawing(self, widget, context):
-        context.set_source_rgb(0.55, 0.95, 0.26)
+        context.set_source_rgb(0.16, 0.17, 0.20)
         roundrect(context, 0, 0, self.width, self.height, 0)
         context.fill()
         #context.move_to(30, 20)
