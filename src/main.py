@@ -10,7 +10,7 @@ from UI.Toolbar import Toolbar
 
 class MyWindow(Gtk.Window):
     def __init__(self):
-        super().__init__(title="Hello World")
+        super().__init__(title="xFont")
         self.set_default_size(1024, 650)
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         window_size = self.get_size()
