@@ -10,7 +10,7 @@ import sys
 import os
 # Make utils available to import from parent directory
 sys.path.append(os.path.abspath('..'))
-from utils import roundrect
+from utils import roundrect, inset_rect
 
 # 31 = 30 + 1 pixels, 1 pixel for bottom border
 TOOLBAR_HEIGHT = 31
@@ -26,6 +26,11 @@ class Toolbar(Gtk.DrawingArea):
         self.height = 0
         self.x = 0
         self.y = 0
+        self.tools = []
+        t1 = Tool()
+        t1.set_parent(self)
+        t1.set_image("cursor-default.png")
+        self.tools.append(t1)
 
     def resize_to_fit_width(self, width):
         self.set_size_request(width, TOOLBAR_HEIGHT)
@@ -38,6 +43,14 @@ class Toolbar(Gtk.DrawingArea):
         parent.move(self, x, y)
         self.x = x
         self.y = y
+
+    def bounds(self):
+        rectangle = Gdk.Rectangle()
+        rectangle.x = 0
+        rectangle.y = 0
+        rectangle.width = self.width
+        rectangle.height = self.height
+        return rectangle
 
     def frame(self):
         rectangle = Gdk.Rectangle()
@@ -60,6 +73,8 @@ class Toolbar(Gtk.DrawingArea):
         context.set_source_rgb(0.7, 0.7, 0.7)
         context.line_to(self.width, TOOLBAR_HEIGHT)
         context.stroke()
+        for tool in self.tools:
+            tool.draw(context)
         #context.set_font_size(14)
         #context.show_text("Get Glyphs")
         # Scale from 50x50 to 25x25, this works both for regular display
@@ -68,4 +83,49 @@ class Toolbar(Gtk.DrawingArea):
         #Gdk.cairo_set_source_pixbuf(context, self.pixbuf, 0, 0)
         #context.paint()
 
+class Tool:
+    ToolWidth = 24
+    ToolHeight = 24
+    margin = 6
 
+    def set_parent(self, toolbar):
+        self.toolbar = toolbar
+
+    def set_image(self, image):
+        path = os.path.join(os.path.abspath('src/icons'), image)
+        self.image = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.ToolWidth * 2, self.ToolHeight * 2)
+
+    def set_hl_image(self, hl_image):
+        path = os.path.join(os.path.abspath('src/icons'), hl_image)
+        self.hl_image = GdkPixbuf.Pixbuf.new_from_file_at_size("/Users/rkt/projects/xFont/src/logo.png", self.ToolWidth, self.ToolHeight)
+
+    def get_rect(self):
+        bounds = self.toolbar.bounds()
+        bounds = inset_rect(bounds, 3, 3)
+        tools_count = len(self.toolbar.tools)
+        tools_width = tools_count * self.ToolWidth + ((tools_count - 1) * self.margin)
+        tools_rect_x = bounds.width / 2 - (tools_width / 2)
+        index = self.toolbar.tools.index(self)
+        x_delta = index * (self.ToolWidth + self.margin)
+        x = tools_rect_x + x_delta
+        y = bounds.y
+        rectangle = Gdk.Rectangle()
+        rectangle.x = x
+        rectangle.y = y
+        rectangle.width = self.ToolWidth
+        rectangle.height = self.ToolHeight
+        return rectangle
+
+    def draw(self, context):
+        rect = self.get_rect()
+        # Scale from 50x50 to 25x25, this works both for regular display
+        # and HiDPI display
+        context.scale(0.5, 0.5)
+        # Muliple rect.x, rect.y by 2 because context.scale(0.5, 0.5)
+        Gdk.cairo_set_source_pixbuf(context, self.image, rect.x * 2, rect.y * 2)
+        context.paint()
+        context.scale(2.0, 2.0)
+
+        #context.set_source_rgb(1.0, 1.0, 1.0)
+        #roundrect(context, rect.x, rect.y, rect.width, rect.height, 0)
+        #context.fill()

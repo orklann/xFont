@@ -12,3 +12,9 @@ def roundrect(context, x, y, width, height, radius):
                 math.pi / 2, math.pi)
     context.close_path()
 
+def inset_rect(rect, x_delta, y_delta):
+    rect.x += x_delta
+    rect.y += y_delta
+    rect.width -= 2 * x_delta
+    rect.height -= 2 * y_delta
+    return rect
