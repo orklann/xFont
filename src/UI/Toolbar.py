@@ -27,10 +27,56 @@ class Toolbar(Gtk.DrawingArea):
         self.x = 0
         self.y = 0
         self.tools = []
-        t1 = Tool()
-        t1.set_parent(self)
-        t1.set_image("cursor-default.png")
-        self.tools.append(t1)
+        # select tool
+        select_tool = Tool()
+        select_tool.set_parent(self)
+        select_tool.set_image("cursor-default.png")
+        self.tools.append(select_tool)
+        # curve tool
+        curve_tool = Tool()
+        curve_tool.set_parent(self)
+        curve_tool.set_image("vector-curve.png")
+        self.tools.append(curve_tool)
+        # knife tool
+        knife_tool = Tool()
+        knife_tool.set_parent(self)
+        knife_tool.set_image("knife.png")
+        self.tools.append(knife_tool)
+        # rectangle tool
+        rectangle_tool = Tool()
+        rectangle_tool.set_parent(self)
+        rectangle_tool.set_image("rectangle.png")
+        self.tools.append(rectangle_tool)
+        # circle tool
+        circle_tool = Tool()
+        circle_tool.set_parent(self)
+        circle_tool.set_image("circle.png")
+        self.tools.append(circle_tool)
+        # eraser tool
+        eraser_tool = Tool()
+        eraser_tool.set_parent(self)
+        eraser_tool.set_image("eraser.png")
+        self.tools.append(eraser_tool)
+        # fill tool
+        fill_tool = Tool()
+        fill_tool.set_parent(self)
+        fill_tool.set_image("alpha-a.png")
+        self.tools.append(fill_tool)
+        # flip tool
+        flip_tool = Tool()
+        flip_tool.set_parent(self)
+        flip_tool.set_image("flip.png")
+        self.tools.append(flip_tool)
+        # rotate tool
+        rotate_tool = Tool()
+        rotate_tool.set_parent(self)
+        rotate_tool.set_image("rotate.png")
+        self.tools.append(rotate_tool)
+        # measure tool
+        measure_tool = Tool()
+        measure_tool.set_parent(self)
+        measure_tool.set_image("numeric.png")
+        self.tools.append(measure_tool)
 
     def resize_to_fit_width(self, width):
         self.set_size_request(width, TOOLBAR_HEIGHT)
