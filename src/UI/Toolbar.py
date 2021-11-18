@@ -91,10 +91,6 @@ class Toolbar(Gtk.DrawingArea):
         self.tools.append(measure_tool)
 
     def on_button_press(self, widget, event):
-        #print("Hello, with event: ", dir(event))
-        print("event type: ", event.type)
-
-    def on_button_release(self, widget, event):
         coord = event.get_coords()
         x = coord[0]
         y = coord[1]
@@ -103,6 +99,9 @@ class Toolbar(Gtk.DrawingArea):
                 tool.active_tool()
                 break
         self.queue_draw()
+
+    def on_button_release(self, widget, event):
+        pass
 
     def resize_to_fit_width(self, width):
         self.set_size_request(width, TOOLBAR_HEIGHT)
