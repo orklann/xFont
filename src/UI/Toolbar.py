@@ -152,6 +152,7 @@ class Tool:
         self.image = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.ToolWidth * 2, self.ToolHeight * 2)
 
     def set_hl_image(self, hl_image):
+        """Set highlight image, it's in white color"""
         path = os.path.join(os.path.abspath('src/icons'), hl_image)
         self.hl_image = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.ToolWidth * 2, self.ToolHeight * 2)
 
