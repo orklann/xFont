@@ -18,3 +18,10 @@ def inset_rect(rect, x_delta, y_delta):
     rect.width -= 2 * x_delta
     rect.height -= 2 * y_delta
     return rect
+
+def point_in_rect(rect, x, y):
+    if x >= rect.x and x <= rect.x + rect.width and \
+            y >= rect.y and y <= rect.y + rect.height:
+        return True
+    else:
+        return False

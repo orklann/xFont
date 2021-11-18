@@ -10,7 +10,7 @@ import sys
 import os
 # Make utils available to import from parent directory
 sys.path.append(os.path.abspath('..'))
-from utils import roundrect, inset_rect
+from utils import roundrect, inset_rect, point_in_rect
 
 # 31 = 30 + 1 pixels, 1 pixel for bottom border
 TOOLBAR_HEIGHT = 31
@@ -21,6 +21,8 @@ class Toolbar(Gtk.DrawingArea):
         self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         self.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
+        self.connect("button-press-event", self.on_button_press)
+        self.connect("button-release-event", self.on_button_release)
         self.connect("draw", self.do_drawing);
         self.width = 0
         self.height = 0
@@ -32,7 +34,6 @@ class Toolbar(Gtk.DrawingArea):
         select_tool.set_parent(self)
         select_tool.set_image("cursor-default.png")
         select_tool.set_hl_image("cursor-default-white.png")
-        select_tool.active = True
         self.tools.append(select_tool)
         # curve tool
         curve_tool = Tool()
@@ -89,6 +90,20 @@ class Toolbar(Gtk.DrawingArea):
         measure_tool.set_hl_image("numeric-white.png")
         self.tools.append(measure_tool)
 
+    def on_button_press(self, widget, event):
+        #print("Hello, with event: ", dir(event))
+        print("event type: ", event.type)
+
+    def on_button_release(self, widget, event):
+        coord = event.get_coords()
+        x = coord[0]
+        y = coord[1]
+        for tool in self.tools:
+            if point_in_rect(tool.get_rect(), x, y):
+                tool.active_tool()
+                break
+        self.queue_draw()
+
     def resize_to_fit_width(self, width):
         self.set_size_request(width, TOOLBAR_HEIGHT)
 
@@ -144,8 +159,15 @@ class Tool:
     ToolWidth = 24
     ToolHeight = 24
     margin = 6
-    active = False
     RADIUS = 3
+
+    def __init__(self):
+        self.active = False
+
+    def active_tool(self):
+        for tool in self.toolbar.tools:
+            tool.active = False
+        self.active = True
 
     def set_parent(self, toolbar):
         self.toolbar = toolbar
