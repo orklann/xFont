@@ -32,6 +32,7 @@ class Toolbar(Gtk.DrawingArea):
         select_tool.set_parent(self)
         select_tool.set_image("cursor-default.png")
         select_tool.set_hl_image("cursor-default-white.png")
+        select_tool.active = True
         self.tools.append(select_tool)
         # curve tool
         curve_tool = Tool()
@@ -143,6 +144,8 @@ class Tool:
     ToolWidth = 24
     ToolHeight = 24
     margin = 6
+    active = False
+    RADIUS = 3
 
     def set_parent(self, toolbar):
         self.toolbar = toolbar
@@ -175,11 +178,18 @@ class Tool:
 
     def draw(self, context):
         rect = self.get_rect()
+        if self.active:
+            context.set_source_rgb(0.78, 0.54, 0.25)
+            roundrect(context, rect.x, rect.y, rect.width, rect.height, self.RADIUS)
+            context.fill()
         # Scale from 50x50 to 25x25, this works both for regular display
         # and HiDPI display
         context.scale(0.5, 0.5)
         # Muliple rect.x, rect.y by 2 because context.scale(0.5, 0.5)
-        Gdk.cairo_set_source_pixbuf(context, self.image, rect.x * 2, rect.y * 2)
+        if self.active:
+            Gdk.cairo_set_source_pixbuf(context, self.hl_image, rect.x * 2, rect.y * 2)
+        else:
+            Gdk.cairo_set_source_pixbuf(context, self.image, rect.x * 2, rect.y * 2)
         context.paint()
         context.scale(2.0, 2.0)
 
