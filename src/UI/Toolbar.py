@@ -146,13 +146,6 @@ class Toolbar(Gtk.DrawingArea):
         context.stroke()
         for tool in self.tools:
             tool.draw(context)
-        #context.set_font_size(14)
-        #context.show_text("Get Glyphs")
-        # Scale from 50x50 to 25x25, this works both for regular display
-        # and HiDPI display
-        #context.scale(0.5, 0.5)
-        #Gdk.cairo_set_source_pixbuf(context, self.pixbuf, 0, 0)
-        #context.paint()
 
 class Tool:
     ToolWidth = 24
