@@ -31,51 +31,61 @@ class Toolbar(Gtk.DrawingArea):
         select_tool = Tool()
         select_tool.set_parent(self)
         select_tool.set_image("cursor-default.png")
+        select_tool.set_hl_image("cursor-default-white.png")
         self.tools.append(select_tool)
         # curve tool
         curve_tool = Tool()
         curve_tool.set_parent(self)
         curve_tool.set_image("vector-curve.png")
+        curve_tool.set_hl_image("vector-curve-white.png")
         self.tools.append(curve_tool)
         # knife tool
         knife_tool = Tool()
         knife_tool.set_parent(self)
         knife_tool.set_image("knife.png")
+        knife_tool.set_hl_image("knife-white.png")
         self.tools.append(knife_tool)
         # rectangle tool
         rectangle_tool = Tool()
         rectangle_tool.set_parent(self)
         rectangle_tool.set_image("rectangle.png")
+        rectangle_tool.set_hl_image("rectangle-white.png")
         self.tools.append(rectangle_tool)
         # circle tool
         circle_tool = Tool()
         circle_tool.set_parent(self)
         circle_tool.set_image("circle.png")
+        circle_tool.set_hl_image("circle-white.png")
         self.tools.append(circle_tool)
         # eraser tool
         eraser_tool = Tool()
         eraser_tool.set_parent(self)
         eraser_tool.set_image("eraser.png")
+        eraser_tool.set_hl_image("eraser-white.png")
         self.tools.append(eraser_tool)
         # fill tool
         fill_tool = Tool()
         fill_tool.set_parent(self)
         fill_tool.set_image("alpha-a.png")
+        fill_tool.set_hl_image("alpha-a-white.png")
         self.tools.append(fill_tool)
         # flip tool
         flip_tool = Tool()
         flip_tool.set_parent(self)
         flip_tool.set_image("flip.png")
+        flip_tool.set_hl_image("flip-white.png")
         self.tools.append(flip_tool)
         # rotate tool
         rotate_tool = Tool()
         rotate_tool.set_parent(self)
         rotate_tool.set_image("rotate.png")
+        rotate_tool.set_hl_image("rotate-white.png")
         self.tools.append(rotate_tool)
         # measure tool
         measure_tool = Tool()
         measure_tool.set_parent(self)
         measure_tool.set_image("numeric.png")
+        measure_tool.set_hl_image("numeric-white.png")
         self.tools.append(measure_tool)
 
     def resize_to_fit_width(self, width):
@@ -143,7 +153,7 @@ class Tool:
 
     def set_hl_image(self, hl_image):
         path = os.path.join(os.path.abspath('src/icons'), hl_image)
-        self.hl_image = GdkPixbuf.Pixbuf.new_from_file_at_size("/Users/rkt/projects/xFont/src/logo.png", self.ToolWidth, self.ToolHeight)
+        self.hl_image = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.ToolWidth * 2, self.ToolHeight * 2)
 
     def get_rect(self):
         bounds = self.toolbar.bounds()
