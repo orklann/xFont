@@ -6,7 +6,8 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 
-from UI.toolbar import Toolbar
+from UI.toolbar import Toolbar, TOOLBAR_HEIGHT
+from UI.tabview import TabView
 
 class MyWindow(Gtk.Window):
     def __init__(self):
@@ -24,6 +25,11 @@ class MyWindow(Gtk.Window):
         self.toolbar.resize_to_fit_width(window_size[0])
         self.layout.add(self.toolbar)
         self.toolbar.move(0, 0)
+
+        self.tabview = TabView()
+        self.tabview.resize_to_fit_width(window_size[0])
+        self.layout.add(self.tabview)
+        self.tabview.move(0, TOOLBAR_HEIGHT)
         #self.button1 = MyButton()
         #self.button1.set_size_request(130, 29)
         #self.button1.connect("motion-notify-event", self.on_button1_move)
