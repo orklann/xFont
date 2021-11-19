@@ -10,7 +10,7 @@ import sys
 import os
 # Make utils available to import from parent directory
 sys.path.append(os.path.abspath('..'))
-from utils import roundrect, inset_rect, point_in_rect
+from utils import roundrect, inset_rect, point_in_rect, resource_path
 
 # 31 = 30 + 1 pixels, 1 pixel for bottom border
 TOOLBAR_HEIGHT = 31
@@ -165,12 +165,16 @@ class Tool:
         self.toolbar = toolbar
 
     def set_image(self, image):
-        path = os.path.join(os.path.abspath('src/icons'), image)
+        path = os.path.join('src', 'icons')
+        path = os.path.join(path, image)
+        path = resource_path(path)
         self.image = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.ToolWidth * 2, self.ToolHeight * 2)
 
     def set_hl_image(self, hl_image):
         """Set highlight image, it's in white color"""
-        path = os.path.join(os.path.abspath('src/icons'), hl_image)
+        path = os.path.join('src', 'icons')
+        path = os.path.join(path, hl_image)
+        path = resource_path(path)
         self.hl_image = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.ToolWidth * 2, self.ToolHeight * 2)
 
     def get_rect(self):

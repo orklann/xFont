@@ -1,4 +1,6 @@
 import math
+import sys
+import os
 
 # Creating function for make roundrect shape
 def roundrect(context, x, y, width, height, radius):
@@ -25,3 +27,9 @@ def point_in_rect(rect, x, y):
         return True
     else:
         return False
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        relative_path = os.path.basename(relative_path)
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
