@@ -48,6 +48,7 @@ class MyWindow(Gtk.Window):
     def layout_views(self):
         window_size = self.get_size()
         self.toolbar.resize_to_fit_width(window_size[0])
+        self.tabview.resize_to_fit_width(window_size[0])
 
     def resized(self, widget, event):
         self.layout_views()
