@@ -34,6 +34,13 @@ class TabView(Gtk.DrawingArea):
         ft = Tab()
         ft.set_parent(self)
         self.tabs.append(ft)
+        st = Tab()
+        st.set_parent(self)
+        self.tabs.append(st)
+        st.active = True
+        tt = Tab()
+        tt.set_parent(self)
+        self.tabs.append(tt)
 
     def on_button_press(self, widget, event):
         coord = event.get_coords()
@@ -121,9 +128,77 @@ class Tab:
 
     def draw(self, context):
         if self.active:
-            pass
+            self.draw_active(context)
         else:
             self.draw_inactive(context)
+
+    def draw_active(self, context):
+        rect = self.get_rect()
+        mid_x = rect.x + (rect.width / 2)
+        mid_y = rect.y + (rect.height / 2)
+        min_x = rect.x
+        min_y = rect.y
+        max_x = rect.x + rect.width
+
+        # -0.5 to feed graphic stroke API for perfect line width
+        # noborder_min_y feed fill API for whole fill
+        max_y = rect.y + rect.height
+        noborder_min_y = rect.y + 1.5
+
+        # Substract min_x by DeltaXForTabs
+        # Restore min_x to original value at the end
+        # We do this to min_x, max_x for drawing active tab more
+        # closing to normal tabs
+        MIN_X = min_x
+        min_x = MIN_X - self.DeltaXForTabs
+
+        # Add max_x by DeltaXForTabs
+        # Restore max_x to original value at the end
+        MAX_X = max_x
+        max_x = MAX_X + self.DeltaXForTabs
+
+        # Substract min_y, restore to origin at the end
+        MIN_Y = min_y
+        min_y = MIN_Y + 1
+
+        # Move minY lower by 1px to fill whole tab
+        minY = 0
+        radius = self.RADIUS
+        #
+        # Fill path
+        #
+        # bottom left arc
+        context.arc_negative(min_x, max_y - radius, radius, math.pi / 2, 0)
+        # top left arc
+        context.arc(min_x + 2 * radius, min_y + radius, radius,
+                math.pi, 3 * math.pi / 2)
+        # top right arc
+        context.arc(max_x - 2 * radius, min_y + radius, radius,
+                3 * math.pi / 2, 0)
+        # bottom right arc
+        context.arc_negative(max_x, max_y - radius, radius,
+                math.pi, math.pi / 2)
+        context.set_source_rgb(self.active_bg_color[0],
+                self.active_bg_color[1],
+                self.active_bg_color[2])
+        context.fill()
+        #
+        # Stroke the same path
+        #
+        # bottom left arc
+        context.arc_negative(min_x, max_y - radius, radius, math.pi / 2, 0)
+        # top left arc
+        context.arc(min_x + 2 * radius, min_y + radius, radius,
+                math.pi, 3 * math.pi / 2)
+        # top right arc
+        context.arc(max_x - 2 * radius, min_y + radius, radius,
+                3 * math.pi / 2, 0)
+        # bottom right arc
+        context.arc_negative(max_x, max_y - radius, radius,
+                math.pi, math.pi / 2)
+        context.set_source_rgb(0.60, 0.60, 0.60)
+        context.set_line_width(2.0)
+        context.stroke()
 
     def draw_inactive(self, context):
         rect = self.get_rect()
