@@ -46,6 +46,10 @@ class TabView(Gtk.DrawingArea):
         coord = event.get_coords()
         x = coord[0]
         y = coord[1]
+        for tab in self.tabs:
+            if point_in_rect(tab.get_rect(), x, y):
+                tab.active_tab()
+                break
         self.queue_draw()
 
     def on_button_release(self, widget, event):
@@ -107,7 +111,7 @@ class Tab:
     LeftPadding = 10
     RightPadding = 14
     DeltaXForTabs = 2
-    DeltaYForTabs = 4
+    DeltaYForTabs = 3
     RADIUS = 4
     FontSize = 11
 
@@ -125,6 +129,11 @@ class Tab:
 
     def set_title(self, title):
         self.title = title
+
+    def active_tab(self):
+        for tab in self.tabview.tabs:
+            tab.active = False
+        self.active = True
 
     def draw(self, context):
         if self.active:
