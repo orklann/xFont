@@ -30,6 +30,10 @@ class TabView(Gtk.DrawingArea):
         self.height = 0
         self.x = 0
         self.y = 0
+        self.tabs = []
+        ft = Tab()
+        ft.set_parent(self)
+        self.tabs.append(ft)
 
     def on_button_press(self, widget, event):
         coord = event.get_coords()
@@ -79,11 +83,143 @@ class TabView(Gtk.DrawingArea):
         roundrect(context, 0, 0, self.width, self.height, 0)
         context.fill()
         self.draw_bottom_line(context)
+        for tab in self.tabs:
+            tab.draw(context)
 
     def draw_bottom_line(self, context):
-        context.move_to(0, self.TabviewHeight)
+        context.move_to(0, self.TabviewHeight - 1)
         context.set_source_rgb(0.6, 0.6, 0.6)
-        context.line_to(self.width, self.TabviewHeight)
+        context.line_to(self.width, self.TabviewHeight - 1)
+        context.set_line_width(2.0)
         context.stroke()
 
 
+class Tab:
+    TabbarHeight = TABVIEW_HEIGHT
+    TabWidth = 100
+    LeftPadding = 10
+    RightPadding = 14
+    DeltaXForTabs = 2
+    DeltaYForTabs = 4
+    RADIUS = 4
+    FontSize = 11
+
+    def __init__(self):
+        self.width = self.TabWidth
+        self.active = False
+        self.highlight = False
+        self.can_closed = True
+        self.is_main_tab = False
+        self.active_bg_color = (1.0, 1.0, 1.0)
+        self.normal_bg_color = (0.71, 0.71, 0.71)
+
+    def set_parent(self, parent):
+        self.tabview = parent
+
+    def set_title(self, title):
+        self.title = title
+
+    def draw(self, context):
+        if self.active:
+            pass
+        else:
+            self.draw_inactive(context)
+
+    def draw_inactive(self, context):
+        rect = self.get_rect()
+        mid_x = rect.x + (rect.width / 2)
+        mid_y = rect.y + (rect.height / 2)
+        min_x = rect.x
+        min_y = rect.y
+        max_x = rect.x + rect.width
+
+        # -0.5 to feed graphic stroke API for perfect line width
+        # noborderMaxY feed fill API for whole fill
+        max_y = rect.y + rect.height
+        noborder_min_y = rect.y# + 1.5
+
+        # Substract min_x by DeltaXForTabs
+        # Restore min_x to original value at the end
+        # We do this to minX, maxX for drawing active tab more
+        # closing to normal tabs
+        MIN_X = min_x
+        min_x = MIN_X - self.DeltaXForTabs
+
+        # Add max_x by DeltaXForTabs
+        # Restore max_x to original value at the end
+        MAX_X = max_x
+        max_x = MAX_X + self.DeltaXForTabs
+
+        # Substract min_y, restore to origin at the end
+        MIN_Y = min_y
+        min_y = MIN_Y + 1
+
+        # We use CGContextAddArcToPoint(context, x1, y1, x2, y2, radius)
+        # to construct rounded corners
+
+        # Make active tab 1px heigher than normal tab
+        max_y -= 1
+
+        # Move minY upper by 1 px
+        min_y += 1
+
+        # Restore minX, maxX to original value
+        min_x = MIN_X
+        max_x = MAX_X
+
+        radius = self.RADIUS
+
+        #
+        # Fill path
+        #
+
+        # top left arc
+        context.arc(min_x + radius, min_y + radius, radius,
+                math.pi, 3 * math.pi / 2)
+        # top right arc
+        context.arc(min_x + self.width - radius, min_y + radius, radius,
+                3 * math.pi /2, 0)
+        #context.arc_negative(max_x + radius, max_y - radius, radius, math.pi, math.pi / 2)
+        # line to bottom right
+        context.line_to(max_x, max_y)
+        # line to bottom left point
+        context.line_to(min_x, max_y)
+        context.close_path()
+        context.set_source_rgb(self.normal_bg_color[0],
+                self.normal_bg_color[1],
+                self.normal_bg_color[2])
+        context.fill()
+
+        #
+        # Stroke the same path
+        #
+
+        # top left arc
+        context.arc(min_x + radius, min_y + radius, radius,
+                math.pi, 3 * math.pi / 2)
+        # top right arc
+        context.arc(min_x + self.width - radius, min_y + radius, radius,
+                3 * math.pi /2, 0)
+        # line to bottom right
+        context.line_to(max_x, max_y)
+        # line to bottom left point
+        context.line_to(min_x, max_y)
+        context.close_path()
+        context.set_line_width(2.0)
+        context.set_source_rgb(0.60, 0.60, 0.60)
+        context.stroke()
+
+
+    def get_rect(self):
+        index = self.tabview.tabs.index(self)
+        rect = Gdk.Rectangle()
+        prev_tabs_width = 0
+        for tab in self.tabview.tabs:
+            if tab == self:
+                break
+            prev_tabs_width += tab.width;
+        rect.x = prev_tabs_width + self.LeftPadding
+        rect.width = self.width
+        rect.height = self.TabbarHeight - self.DeltaYForTabs
+        rect.y = self.DeltaYForTabs
+        return rect
