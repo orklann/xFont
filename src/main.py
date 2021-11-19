@@ -6,7 +6,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 
-from UI.Toolbar import Toolbar
+from UI.toolbar import Toolbar
 
 class MyWindow(Gtk.Window):
     def __init__(self):
