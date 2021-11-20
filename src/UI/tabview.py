@@ -34,10 +34,20 @@ class TabView(Gtk.DrawingArea):
         self.y = 0
         self.active_tab = None
         self.tabs = []
+        # Main tab
+        main_tab = Tab()#self.newTabWithTitle_("◈")
+        main_tab.normal_bg_color = (0.94, 0.76, 0.19)
+        main_tab.active_bg_color = (0.96, 0.96, 0.96)
+        main_tab.can_closed = False
+        main_tab.width = 65
+        main_tab.is_main_tab = True
+        main_tab.set_title("◈")
+        main_tab.set_parent(self)
+        self.tabs.append(main_tab)
+        main_tab.active_tab()
         ft = Tab()
         ft.set_parent(self)
         ft.set_title('A')
-        ft.active_tab()
         self.tabs.append(ft)
         st = Tab()
         st.set_parent(self)
