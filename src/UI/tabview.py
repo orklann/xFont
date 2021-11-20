@@ -2,9 +2,10 @@ import gi
 import math
 
 gi.require_version("Gtk", "3.0")
+gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk
 from gi.repository import Gdk
-from gi.repository import GdkPixbuf
+from gi.repository import GdkPixbuf, Pango, PangoCairo
 
 import sys
 import os
@@ -172,21 +173,26 @@ class Tab:
 
     def draw_title(self, context):
         rect = self.get_rect()
-        if self.active:
-            pass
-        else:
-            pass
+        context.set_source_rgb(0.0, 0.0, 0.0)
+        context.set_font_size(self.FontSize)
+
+        FONT = "Arail 8"
+
+        # Create a Pango Context and Layout, set the font and text
+        pc_ctx = PangoCairo.create_context(context)
+        pc_layout = PangoCairo.create_layout(context)
+        desc = Pango.FontDescription(FONT)
+        pc_layout.set_font_description(desc)
         # Title text
         # Todo: Implement self.get_short_title() method
         short_title = self.title#self.get_short_title()
         text_extents = context.text_extents(short_title)
-        title_rect = inset_rect(rect, 8, 3)
+        title_rect = inset_rect(rect, 8, 0)
         x = (title_rect.x + title_rect.width / 2) - (text_extents.width / 2)
-        y = (title_rect.y + title_rect.height /2) + (text_extents.height / 2)
+        y = (title_rect.y + title_rect.height / 2) - (text_extents.height / 2)
         context.move_to(x, y)
-        context.set_source_rgb(0.0, 0.0, 0.0)
-        context.set_font_size(self.FontSize)
-        context.show_text(short_title)
+        pc_layout.set_text(short_title)
+        PangoCairo.show_layout(context, pc_layout)
         context.new_path() # clear path for next tab drawing
 
     def draw_active(self, context):
