@@ -25,21 +25,23 @@ class TabView(Gtk.DrawingArea):
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
         self.connect("button-press-event", self.on_button_press)
         self.connect("button-release-event", self.on_button_release)
+        self.connect("motion-notify-event", self.on_button_move)
         self.connect("draw", self.do_drawing);
         self.width = 0
         self.height = 0
         self.x = 0
         self.y = 0
+        self.active_tab = None
         self.tabs = []
         ft = Tab()
         ft.set_parent(self)
         ft.set_title('A')
+        ft.active_tab()
         self.tabs.append(ft)
         st = Tab()
         st.set_parent(self)
         st.set_title('B')
         self.tabs.append(st)
-        st.active = True
         tt = Tab()
         tt.set_parent(self)
         tt.set_title('C')
@@ -53,10 +55,28 @@ class TabView(Gtk.DrawingArea):
             if point_in_rect(tab.get_rect(), x, y):
                 tab.active_tab()
                 break
+        for tab in self.tabs:
+            tab.mouse_down(x, y)
         self.queue_draw()
 
     def on_button_release(self, widget, event):
         pass
+
+    def on_button_move(self, widget, event):
+        coord = event.get_coords()
+        x = coord[0]
+        y = coord[1]
+        for tab in self.tabs:
+            tab.mouse_move(x, y)
+        self.queue_draw()
+
+    def get_tab_in_point_(self, x, y):
+        tabs = self.tabs
+        for tab in tabs:
+            rect = tab.get_rect()
+            if point_in_rect(rect, x, y):
+                return tab
+        return None
 
     def resize_to_fit_width(self, width):
         self.set_size_request(width, self.TabviewHeight)
@@ -123,6 +143,7 @@ class Tab:
         self.active = False
         self.highlight = False
         self.can_closed = True
+        self.mouse_over = False
         self.is_main_tab = False
         self.active_bg_color = (1.0, 1.0, 1.0)
         self.normal_bg_color = (0.71, 0.71, 0.71)
@@ -137,12 +158,16 @@ class Tab:
         for tab in self.tabview.tabs:
             tab.active = False
         self.active = True
+        self.tabview.active_tab = self
 
     def draw(self, context):
         if self.active:
             self.draw_active(context)
         else:
             self.draw_inactive(context)
+        # Draw close button
+        if self.active or self.highlight or self.mouse_over:
+            self.draw_close_button(context)
         self.draw_title(context)
 
     def draw_title(self, context):
@@ -315,6 +340,77 @@ class Tab:
         context.set_source_rgb(0.60, 0.60, 0.60)
         context.stroke()
 
+    def draw_close_button(self, context):
+        if not self.can_closed:
+            return
+        rect = self.close_button_rect()
+        min_x = rect.x
+        max_x = rect.x + rect.width
+        min_y = rect.y
+        max_y = rect.y + rect.height
+
+        # Draw rounded rect while highlight
+        if self.highlight:
+            rounded_rect = inset_rect(rect, -3, -3)
+            roundrect(context, rounded_rect.x, rounded_rect.y,
+                    rounded_rect.width, rounded_rect.height, 3)
+            context.set_source_rgb(0.60, 0.60, 0.60)
+            context.fill()
+
+        context.move_to(min_x, min_y)
+        context.line_to(max_x, max_y)
+        context.move_to(min_x, max_y)
+        context.line_to(max_x, min_y)
+        context.set_line_width(2.0)
+        if self.highlight:
+            context.set_source_rgb(1.0, 1.0, 1.0)
+        elif self.mouse_over:
+            context.set_source_rgb(0.60, 0.60, 0.60)
+        else:
+            context.set_source_rgb(0.84, 0.84, 0.84)
+        context.stroke()
+
+    def mouse_move(self, x, y):
+        rect = self.close_button_rect()
+        enlarg_rect = inset_rect(rect, -3, -3)
+        bounds = self.get_rect()
+        if point_in_rect(enlarg_rect, x, y):
+            self.highlight = True
+            self.mouse_over = False
+        elif point_in_rect(bounds, x, y):
+            self.mouse_over = True
+            self.highlight = False
+        else:
+            self.mouse_over = False
+            self.highlight = False
+
+    def mouse_down(self, x, y):
+        if not self.can_closed:
+            return False
+        rect = self.close_button_rect()
+        enlarg_rect = inset_rect(rect, -3, -3)
+        if point_in_rect(enlarg_rect, x, y) and len(self.tabview.tabs) > 1:
+            self.tabview.tabs.remove(self)
+            first_tab = self.tabview.tabs[0]
+            first_tab.active_tab()
+            #self.parent.controller.tabDidClose_(self)
+            return True
+
+    def close_button_rect(self):
+        width = 7
+        height = 7
+        left_margin = 10
+        min_x = self.get_rect().x
+        max_y = self.get_rect().y + self.get_rect().height
+        x = min_x + left_margin
+        y = max_y - ((self.TabbarHeight - self.DeltaYForTabs - height) / 2) - height
+        rect = Gdk.Rectangle()
+        rect.x = x
+        # plus 1, move close button down a little bit for nice looking
+        rect.y = y + 1
+        rect.width = width
+        rect.height = height
+        return rect
 
     def get_rect(self):
         index = self.tabview.tabs.index(self)
