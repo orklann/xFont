@@ -33,13 +33,16 @@ class TabView(Gtk.DrawingArea):
         self.tabs = []
         ft = Tab()
         ft.set_parent(self)
+        ft.set_title('A')
         self.tabs.append(ft)
         st = Tab()
         st.set_parent(self)
+        st.set_title('B')
         self.tabs.append(st)
         st.active = True
         tt = Tab()
         tt.set_parent(self)
+        tt.set_title('C')
         self.tabs.append(tt)
 
     def on_button_press(self, widget, event):
@@ -140,6 +143,26 @@ class Tab:
             self.draw_active(context)
         else:
             self.draw_inactive(context)
+        self.draw_title(context)
+
+    def draw_title(self, context):
+        rect = self.get_rect()
+        if self.active:
+            pass
+        else:
+            pass
+        # Title text
+        # Todo: Implement self.get_short_title() method
+        short_title = self.title#self.get_short_title()
+        text_extents = context.text_extents(short_title)
+        title_rect = inset_rect(rect, 8, 3)
+        x = (title_rect.x + title_rect.width / 2) - (text_extents.width / 2)
+        y = (title_rect.y + title_rect.height /2) + (text_extents.height / 2)
+        context.move_to(x, y)
+        context.set_source_rgb(0.0, 0.0, 0.0)
+        context.set_font_size(11)
+        context.show_text(short_title)
+        context.new_path() # clear path for next tab drawing
 
     def draw_active(self, context):
         rect = self.get_rect()
@@ -273,7 +296,6 @@ class Tab:
                 self.normal_bg_color[1],
                 self.normal_bg_color[2])
         context.fill()
-
         #
         # Stroke the same path
         #
