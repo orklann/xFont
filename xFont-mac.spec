@@ -6,7 +6,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['src/main.py'],
+    ['src/xFont.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -43,7 +43,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='main',
+    name='xFont',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -63,11 +63,11 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='main',
+    name='xFont',
 )
 app = BUNDLE(
     coll,
-    name='main.app',
+    name='xFont.app',
     icon=None,
     bundle_identifier=None,
 )
