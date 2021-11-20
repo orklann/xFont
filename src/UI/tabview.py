@@ -62,12 +62,16 @@ class TabView(Gtk.DrawingArea):
         coord = event.get_coords()
         x = coord[0]
         y = coord[1]
+        closed = False
         for tab in self.tabs:
-            if point_in_rect(tab.get_rect(), x, y):
-                tab.active_tab()
+            closed = tab.mouse_down(x, y)
+            if closed:
                 break
-        for tab in self.tabs:
-            tab.mouse_down(x, y)
+        if not closed:
+            for tab in self.tabs:
+                if point_in_rect(tab.get_rect(), x, y):
+                    tab.active_tab()
+                    break
         self.queue_draw()
 
     def on_button_release(self, widget, event):
@@ -81,7 +85,7 @@ class TabView(Gtk.DrawingArea):
             tab.mouse_move(x, y)
         self.queue_draw()
 
-    def get_tab_in_point_(self, x, y):
+    def get_tab_in_point(self, x, y):
         tabs = self.tabs
         for tab in tabs:
             rect = tab.get_rect()
@@ -406,11 +410,16 @@ class Tab:
         rect = self.close_button_rect()
         enlarg_rect = inset_rect(rect, -3, -3)
         if point_in_rect(enlarg_rect, x, y) and len(self.tabview.tabs) > 1:
+            tab_in_point = self.tabview.get_tab_in_point(x, y)
+            # if tabs count is equal to 2, we always active first tab,
+            # because we have 1 tab left after close this tab
+            if tab_in_point.active or len(self.tabview.tabs) == 2:
+                first_tab = self.tabview.tabs[0]
+                first_tab.active_tab()
             self.tabview.tabs.remove(self)
-            first_tab = self.tabview.tabs[0]
-            first_tab.active_tab()
             #self.parent.controller.tabDidClose_(self)
             return True
+        return False
 
     def close_button_rect(self):
         width = 7
