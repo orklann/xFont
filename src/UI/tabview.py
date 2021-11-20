@@ -160,7 +160,7 @@ class Tab:
         y = (title_rect.y + title_rect.height /2) + (text_extents.height / 2)
         context.move_to(x, y)
         context.set_source_rgb(0.0, 0.0, 0.0)
-        context.set_font_size(11)
+        context.set_font_size(self.FontSize)
         context.show_text(short_title)
         context.new_path() # clear path for next tab drawing
 
